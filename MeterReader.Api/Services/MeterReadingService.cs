@@ -12,10 +12,10 @@ namespace MeterReader.Api.Services
 
         private readonly IConsumerRepository _consumerRepository;
 
-        private readonly ILogger<MeterReadingController> _logger;
+        private readonly ILogger<MeterReadingService> _logger;
 
 
-        public MeterReadingService(IConsumerRepository consumerRepository, ILogger<MeterReadingController> logger) {
+        public MeterReadingService(IConsumerRepository consumerRepository, ILogger<MeterReadingService> logger) {
 
             _consumerRepository = consumerRepository;
             _logger = logger;
@@ -24,9 +24,6 @@ namespace MeterReader.Api.Services
 
         public async Task<(int, int)> UploadMeterReadings(IFormFile file)
         {
-
-            var successfulCount = 0;
-            var failedCount = 0;
 
             try
             {
@@ -37,35 +34,15 @@ namespace MeterReader.Api.Services
                     //register a custom map
                     csv.Context.RegisterClassMap<ReadingDateMap>();
 
-                    var records = csv.GetRecords<MeterReading>().ToList();
+                    var meterReadings = csv.GetRecords<MeterReading>().ToList();
 
-                    foreach (var record in records)
-                    {
-                        if (await IsValidReading(record))
-                        {
-                            // Save valid readings to the database
-                            var meterReading = new MeterReading
-                            {
-                                AccountId = record.AccountId,
-                                MeterReadingDateTime = record.MeterReadingDateTime,
-                                MeterReadValue = record.MeterReadValue
-                            };
+                    var results = await SaveMeterReadings(meterReadings);
 
-                            _consumerRepository.AddMeterReading(meterReading);
+                    return results;
 
-                            successfulCount++;
-                        }
-                        else
-                        {
-                            failedCount++;
-                        }
-                    }
-
-                    // Commit transaction
-                    _consumerRepository.CommitMeterReadings();
                 }
 
-                return (successfulCount, failedCount);
+                
 
                 //Ok(new { SuccessfulCount = successfulCount, FailedCount = failedCount });
             }
@@ -77,6 +54,41 @@ namespace MeterReader.Api.Services
 
                 
             }
+        }
+
+        public async Task<(int, int)> SaveMeterReadings(IList<MeterReading> meterReadings) {
+
+            var successfulCount = 0;
+            var failedCount = 0;
+
+            foreach (var reading in meterReadings)
+            {
+                if (await IsValidReading(reading))
+                {
+                    // Save valid readings to the database
+                    var meterReading = new MeterReading
+                    {
+                        AccountId = reading.AccountId,
+                        MeterReadingDateTime = reading.MeterReadingDateTime,
+                        MeterReadValue = reading.MeterReadValue
+                    };
+
+                    _consumerRepository.AddMeterReading(meterReading);
+
+                    successfulCount++;
+                }
+                else
+                {
+                    failedCount++;
+                }
+            }
+
+            // Commit transaction
+            _consumerRepository.CommitMeterReadings();
+
+            return (successfulCount, failedCount);
+
+
         }
 
         //Domain logic validations

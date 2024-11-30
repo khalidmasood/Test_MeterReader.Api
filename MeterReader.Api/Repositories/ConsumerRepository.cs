@@ -17,6 +17,7 @@ namespace MeterReader.Api.Repositories
 
         public async void AddMeterReading(MeterReading reading) {
 
+
             await _context.MeterReadings.AddAsync(reading);
         }
 
