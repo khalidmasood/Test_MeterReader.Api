@@ -14,7 +14,7 @@ namespace MeterReader.Api.Repositories
 
         public Task<bool> IsNewReadOlderThanExistingRead(MeterReading reading);
 
-        public void CommitMeterReadings();
+        public Task<int> CommitMeterReadings();
 
     }
 }

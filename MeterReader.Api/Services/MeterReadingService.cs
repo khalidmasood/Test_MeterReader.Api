@@ -84,7 +84,7 @@ namespace MeterReader.Api.Services
             }
 
             // Commit transaction
-            _consumerRepository.CommitMeterReadings();
+            await _consumerRepository.CommitMeterReadings();
 
             return (successfulCount, failedCount);
 

@@ -39,9 +39,9 @@ namespace MeterReader.Api.Repositories
             return await _context.MeterReadings.AnyAsync(mr => mr.AccountId == reading.AccountId && mr.MeterReadingDateTime >= reading.MeterReadingDateTime);
         }
 
-        public async void CommitMeterReadings() {
+        public async Task<int> CommitMeterReadings() {
 
-            await _context.SaveChangesAsync();
+            return await _context.SaveChangesAsync();
 
         }
 
