@@ -110,7 +110,14 @@ namespace MeterReader.Api.Services
                 return false;
             }
 
+            //NICE TO HAVE
+            var newEntryExists = await _consumerRepository.IsNewReadOlderThanExistingRead(reading);
 
+            if (newEntryExists)
+            {
+                _logger.LogError($"Reading older than the latest reading on account: {readStr}");
+                return false;
+            }
 
             return true;
         }

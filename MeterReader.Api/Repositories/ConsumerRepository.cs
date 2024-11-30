@@ -32,6 +32,12 @@ namespace MeterReader.Api.Repositories
             return await _context.ConsumerAccounts.AnyAsync(c => c.AccountId == reading.AccountId);
         }
 
+        public async Task<bool> IsNewReadOlderThanExistingRead(MeterReading reading)
+        {
+            //check if a more latest reading exists on the account than the currently uploaded reading
+            return await _context.MeterReadings.AnyAsync(mr => mr.AccountId == reading.AccountId && mr.MeterReadingDateTime >= reading.MeterReadingDateTime);
+        }
+
         public async void CommitMeterReadings() {
 
             await _context.SaveChangesAsync();

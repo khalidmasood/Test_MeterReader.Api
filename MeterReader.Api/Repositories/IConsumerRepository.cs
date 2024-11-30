@@ -12,6 +12,8 @@ namespace MeterReader.Api.Repositories
         public Task<bool> IsDuplicateMeterReading(MeterReading reading);
         public Task<bool> ConsumerAccountExists(MeterReading reading);
 
+        public Task<bool> IsNewReadOlderThanExistingRead(MeterReading reading);
+
         public void CommitMeterReadings();
 
     }
