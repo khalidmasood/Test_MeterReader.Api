@@ -1,0 +1,19 @@
+﻿use  consumerdata
+
+drop table ConsumerAccounts
+drop table MeterReadings
+
+
+CREATE TABLE ConsumerAccounts (
+    AccountId INT PRIMARY KEY,
+    FirstName NVARCHAR(50),
+    LastName NVARCHAR(50)
+);
+
+CREATE TABLE MeterReadings (
+    Id INT PRIMARY KEY IDENTITY(1,1),
+    AccountId INT FOREIGN KEY REFERENCES ConsumerAccounts(AccountId),
+    MeterReadDT DATETIME,
+    MeterReadVal INT,
+    UNIQUE (AccountId, MeterReadDT)
+);
