@@ -5,3 +5,5 @@ The **ConsumerRepository** is connecting with database using the DBContext from 
 Additionally I have **Srilogger** to write any rule violations or  critical errors to a text file in a root Log folder. This is very convenient to trouble shoot issues.
 
 To test the whole thing I have added **Swagger** API tester to quickly upload a file and test it.
+
+Added Unit tests project with 5 Unit tests using xUnit and Moq.
